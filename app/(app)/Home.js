@@ -15,7 +15,7 @@ export default function Home() {
     const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height;
     const { user, addToMyList, removeFromMyList } = useAuth();
-    const [selectedGenre, setSelectedGenre] = useState(28);  // ตั้งค่าเริ่มต้นเป็น 28 (Action)
+    const [selectedGenre, setSelectedGenre] = useState(28);  // Set initial value to 28 (Action)
     const [genreMovies, setGenreMovies] = useState([]);
     const genreScrollViewRef = React.useRef(null);
     const [currentPage, setCurrentPage] = useState(0);
@@ -25,7 +25,7 @@ export default function Home() {
         fetchTrendingMovies();
         fetchRecommendedMovies();
         fetchUpcomingMovies();
-        fetchMoviesByGenre(selectedGenre);  // เรียกใช้ฟังก์ชันนี้ทันทีเมื่อคอมโพเนนต์โหลด
+        fetchMoviesByGenre(selectedGenre);  // Call this function immediately when the component loads
     }, []);
 
     useEffect(() => {
@@ -37,22 +37,22 @@ export default function Home() {
     const fetchTrendingMovies = async () => {
         try {
             const API_KEY = config().TMDB_API_KEY;
-            const response = await fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${API_KEY}&language=th-TH`);
+            const response = await fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${API_KEY}&language=en-US`);
             if (!response.ok) {
                 if (response.status === 401) {
-                    throw new Error('API key ไม่ถูกต้องหรือหมดอายุ กรุณาตรวจสอบ API key ของคุณ');
+                    throw new Error('Invalid or expired API key. Please check your API key.');
                 }
-                throw new Error(`การตอบสนองจากเซิร์ฟเวอร์ไม่สมบูรณ์: ${response.status} ${response.statusText}`);
+                throw new Error(`Incomplete server response: ${response.status} ${response.statusText}`);
             }
             const data = await response.json();
             if (data.results && Array.isArray(data.results)) {
                 setTrendingMovies(data.results.slice(0, 10));
                 setError(null);
             } else {
-                throw new Error('โครงสร้างข้อมูลไม่ถูกต้อง');
+                throw new Error('Invalid data structure');
             }
         } catch (error) {
-            console.error('เกิดข้อผิดพลาดในการดึงข้อมูลหนังกำลังมาแรง:', error.message);
+            console.error('Error fetching trending movies:', error.message);
             setError(error.message);
             setTrendingMovies([]);
         }
@@ -61,54 +61,54 @@ export default function Home() {
     const fetchRecommendedMovies = async () => {
         try {
             const API_KEY = config().TMDB_API_KEY;
-            const response = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=th-TH`);
+            const response = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US`);
             if (!response.ok) {
-                throw new Error(`การตอบสนองจากเซิร์ฟเวอร์ไม่สมบูรณ์: ${response.status} ${response.statusText}`);
+                throw new Error(`Incomplete server response: ${response.status} ${response.statusText}`);
             }
             const data = await response.json();
             if (data.results && Array.isArray(data.results)) {
                 setRecommendedMovies(data.results.slice(0, 10));
             } else {
-                throw new Error('โครงสร้างข้อมูลไม่ถูกต้อง');
+                throw new Error('Invalid data structure');
             }
         } catch (error) {
-            console.error('เกิดข้อผิดพลาดในการดึงข้อมูลหนังแนะนำ:', error.message);
+            console.error('Error fetching recommended movies:', error.message);
         }
     };
 
     const fetchUpcomingMovies = async () => {
         try {
             const API_KEY = config().TMDB_API_KEY;
-            const response = await fetch(`https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}&language=th-TH`);
+            const response = await fetch(`https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}&language=en-US`);
             if (!response.ok) {
-                throw new Error(`การตอบสนองจากเซิร์ฟเวอร์ไม่สมบูรณ์: ${response.status} ${response.statusText}`);
+                throw new Error(`Incomplete server response: ${response.status} ${response.statusText}`);
             }
             const data = await response.json();
             if (data.results && Array.isArray(data.results)) {
                 setUpcomingMovies(data.results.slice(0, 10));
             } else {
-                throw new Error('โครงสร้างข้อมูลไม่ถูกต้อง');
+                throw new Error('Invalid data structure');
             }
         } catch (error) {
-            console.error('เกิดข้อผิดพลาดในการดึงข้อมูลหนังที่กำลังจะเข้าฉาย:', error.message);
+            console.error('Error fetching upcoming movies:', error.message);
         }
     };
 
     const fetchMoviesByGenre = async (genreId) => {
         try {
             const API_KEY = config().TMDB_API_KEY;
-            const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=th-TH&with_genres=${genreId}`);
+            const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=en-US&with_genres=${genreId}`);
             if (!response.ok) {
-                throw new Error(`การตอบสนองจากเซิร์ฟเวอร์ไม่สมบูรณ์: ${response.status} ${response.statusText}`);
+                throw new Error(`Incomplete server response: ${response.status} ${response.statusText}`);
             }
             const data = await response.json();
             if (data.results && Array.isArray(data.results)) {
                 setGenreMovies(data.results.slice(0, 10));
             } else {
-                throw new Error('โครงสร้างข้อมูลไม่ถูกต้อง');
+                throw new Error('Invalid data structure');
             }
         } catch (error) {
-            console.error('เกิดข้อผิดพลาดในการดึงข้อมูลหนังตามหมวดหมู่:', error.message);
+            console.error('Error fetching movies by genre:', error.message);
         }
     };
 
@@ -121,7 +121,7 @@ export default function Home() {
         { id: 53, name: 'Thriller' },
         { id: 36, name: 'History' },
         { id: 9648, name: 'Mystery' },
-        { id: 16, name: 'Animation' }  // เพิ่มหมวดหมู่การ์ตูน
+        { id: 16, name: 'Animation' }  // Add animation genre
     ];
 
     const handleMoviePress = (movie) => {
@@ -134,19 +134,19 @@ export default function Home() {
             if (isInMyList) {
                 const result = await removeFromMyList(user.userId, movie);
                 if (result.success) {
-                    // อัปเดต UI หรือแสดงข้อความว่าลบสำเร็จ
-                    console.log('ลบหนังออกจาก My List สำเร็จ');
+                    // Update UI or show success message
+                    console.log('Successfully removed movie from My List');
                 }
             } else {
                 const result = await addToMyList(user.userId, movie);
                 if (result.success) {
-                    // อัปเดต UI หรือแสดงข้อความว่าเพิ่มสำเร็จ
-                    console.log('เพิ่มหนังลงใน My List สำเร็จ');
+                    // Update UI or show success message
+                    console.log('Successfully added movie to My List');
                 }
             }
         } else {
-            // แจ้งเตือนให้ผู้ใช้เข้าสู่ระบบ
-            console.log('กรุณาเข้าสู่ระบบเพื่อเพิ่มหนังลงใน My List');
+            // Notify user to log in
+            console.log('Please log in to add movies to My List');
         }
     };
 
@@ -193,14 +193,14 @@ export default function Home() {
             style={styles.gradient}
         >
             <View style={styles.header}>
-                <Text style={styles.headerTitle}>หน้าหลัก</Text>
+                <Text style={styles.headerTitle}>Home</Text>
                 <TouchableOpacity onPress={handleSearchPress} style={styles.searchButton}>
                     <Ionicons name="search" size={24} color="#fff" />
                 </TouchableOpacity>
             </View>
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
                 <View style={styles.titleContainer}>
-                    <Text style={styles.title}>มาแรงวันนี้ 10 อันดับ</Text>
+                    <Text style={styles.title}>Top 10 Trending Today</Text>
                 </View>
                 <ScrollView
                     horizontal
@@ -214,9 +214,9 @@ export default function Home() {
                     {error ? (
                         <View style={styles.errorContainer}>
                             <Ionicons name="alert-circle-outline" size={64} color="#ff6b6b" />
-                            <Text style={styles.errorText}>{`เกิดข้อผิดพลาด: ${error}`}</Text>
+                            <Text style={styles.errorText}>{`Error: ${error}`}</Text>
                             <TouchableOpacity style={styles.retryButton} onPress={retryFetchMovies}>
-                                <Text style={styles.retryText}>ลองใหม่อีกครั้ง</Text>
+                                <Text style={styles.retryText}>Retry</Text>
                             </TouchableOpacity>
                         </View>
                     ) : trendingMovies.length > 0 ? (
@@ -232,26 +232,28 @@ export default function Home() {
                                             colors={['transparent', 'rgba(0,0,0,0.9)']}
                                             style={styles.movieGradient}
                                         >
-                                            <Text style={styles.movieRank}>อันดับ {index + 1}</Text>
-                                            <Text style={styles.movieTitle}>{movie.title}</Text>
-                                            <Text style={styles.movieOverview}>{movie.overview.slice(0, 100)}...</Text>
-                                            <View style={styles.ratingContainer}>
-                                                <Text style={styles.imdbText}>IMDb</Text>
-                                                <Text style={styles.ratingText}>{movie.vote_average.toFixed(1)}</Text>
+                                            <View style={styles.movieContent}>
+                                                <Text style={styles.movieRank}>Rank {index + 1}</Text>
+                                                <Text style={styles.movieTitle}>{movie.title}</Text>
+                                                <Text style={styles.movieOverview} numberOfLines={2}>{movie.overview}</Text>
+                                                <View style={styles.ratingContainer}>
+                                                    <Text style={styles.imdbText}>IMDb</Text>
+                                                    <Text style={styles.ratingText}>{movie.vote_average.toFixed(1)}</Text>
+                                                </View>
+                                                <TouchableOpacity
+                                                    style={styles.myListButton}
+                                                    onPress={() => handleAddRemoveMyList(movie)}
+                                                >
+                                                    <Ionicons
+                                                        name={user && user.myList && user.myList.some(item => item.id === movie.id) ? "checkmark-circle" : "add-circle-outline"}
+                                                        size={20}
+                                                        color="#fff"
+                                                    />
+                                                    <Text style={styles.myListButtonText}>
+                                                        {user && user.myList && user.myList.some(item => item.id === movie.id) ? "Remove" : "Add to My list"}
+                                                    </Text>
+                                                </TouchableOpacity>
                                             </View>
-                                            <TouchableOpacity
-                                                style={styles.myListButton}
-                                                onPress={() => handleAddRemoveMyList(movie)}
-                                            >
-                                                <Ionicons
-                                                    name={user && user.myList && user.myList.some(item => item.id === movie.id) ? "checkmark-circle" : "add-circle-outline"}
-                                                    size={24}
-                                                    color="#fff"
-                                                />
-                                                <Text style={styles.myListButtonText}>
-                                                    {user && user.myList && user.myList.some(item => item.id === movie.id) ? "นำออกจาก My List" : "เพิ่มใน My List"}
-                                                </Text>
-                                            </TouchableOpacity>
                                         </LinearGradient>
                                     </ImageBackground>
                                 </View>
@@ -260,7 +262,7 @@ export default function Home() {
                     ) : (
                         <View style={styles.loadingContainer}>
                             <Ionicons name="film-outline" size={64} color="#fff" />
-                            <Text style={styles.loadingText}>กำลังโหลดข้อมูลหนัง...</Text>
+                            <Text style={styles.loadingText}>Loading movies...</Text>
                         </View>
                     )}
                 </ScrollView>
@@ -277,7 +279,7 @@ export default function Home() {
                 </View>
 
                 <View style={styles.titleContainer}>
-                    <Text style={styles.title}>หนังแนะนำสำหรับสัปดาห์นี้</Text>
+                    <Text style={styles.title}>Recommended This Week</Text>
                     <TouchableOpacity onPress={() => handleSeeAll('recommended')}>
                         <Text style={styles.seeAllButton}>See All</Text>
                     </TouchableOpacity>
@@ -312,7 +314,7 @@ export default function Home() {
                 </ScrollView>
 
                 <View style={styles.titleContainer}>
-                    <Text style={styles.title}>หนังที่กำลังจะเข้าฉาย</Text>
+                    <Text style={styles.title}>Upcoming Movies</Text>
                     <TouchableOpacity onPress={() => handleSeeAll('upcoming')}>
                         <Text style={styles.seeAllButton}>See All</Text>
                     </TouchableOpacity>
@@ -335,7 +337,10 @@ export default function Home() {
                                         style={styles.recommendedMovieGradient}
                                     >
                                         <Text style={styles.recommendedMovieTitle}>{movie.title}</Text>
-                                        <Text style={styles.upcomingReleaseDate}>วันที่เข้าฉาย: {movie.release_date}</Text>
+                                        <View style={styles.releaseDateContainer}>
+                                            <Ionicons name="calendar-outline" size={16} color="#fff" />
+                                            <Text style={styles.upcomingReleaseDate}>{movie.release_date}</Text>
+                                        </View>
                                     </LinearGradient>
                                 </ImageBackground>
                             </View>
@@ -344,7 +349,7 @@ export default function Home() {
                 </ScrollView>
 
                 <View style={styles.titleContainer}>
-                    <Text style={styles.title}>หมวดหมู่ยอดนิยม</Text>
+                    <Text style={styles.title}>Popular Categories</Text>
                     <TouchableOpacity onPress={() => handleSeeAll('genres')}>
                         <Text style={styles.seeAllButton}>See All</Text>
                     </TouchableOpacity>
@@ -405,7 +410,8 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     contentContainer: {
-        paddingBottom: 20
+        paddingBottom: 100
+
     },
     gradient: {
         flex: 1,
@@ -417,6 +423,9 @@ const styles = StyleSheet.create({
         marginTop: 30,
         marginBottom: 20,
         paddingHorizontal: 20,
+        borderLeftWidth: 4,
+        borderLeftColor: '#e50914',
+        paddingLeft: 16,
     },
     title: {
         fontSize: 24,
@@ -430,6 +439,10 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#e50914',
         fontWeight: 'bold',
+        backgroundColor: 'rgba(229, 9, 20, 0.1)',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 20,
     },
     scrollView: {
         height: Dimensions.get('window').width,
@@ -443,7 +456,7 @@ const styles = StyleSheet.create({
     errorText: {
         fontSize: 18,
         textAlign: 'center',
-        color: '#ff6b6b',
+        color: '#e50914',
         marginVertical: 20,
     },
     retryButton: {
@@ -470,56 +483,69 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     movieImageStyle: {
-        borderRadius: 25,
+        borderRadius: 15,
     },
     movieGradient: {
         height: '50%',
         justifyContent: 'flex-end',
-        padding: 20,
-        borderBottomLeftRadius: 25,
-        borderBottomRightRadius: 25,
+        padding: 15,
+        borderBottomLeftRadius: 15,
+        borderBottomRightRadius: 15,
+    },
+    movieContent: {
+        alignItems: 'flex-start',
     },
     movieRank: {
-        fontSize: 24,
+        fontSize: 40,
         fontWeight: 'bold',
         color: '#FFD700',
-        textAlign: 'center',
-        marginBottom: 10,
+        marginBottom: 5,
         textShadowColor: 'rgba(0, 0, 0, 0.75)',
         textShadowOffset: { width: -1, height: 1 },
-        textShadowRadius: 10
+        textShadowRadius: 5
     },
     movieTitle: {
-        fontSize: 28,
+        fontSize: 30,
         fontWeight: 'bold',
         color: '#fff',
-        textAlign: 'center',
-        marginBottom: 10,
+        marginBottom: 5,
         textShadowColor: 'rgba(0, 0, 0, 0.75)',
         textShadowOffset: { width: -1, height: 1 },
-        textShadowRadius: 10
+        textShadowRadius: 5
     },
     movieOverview: {
-        fontSize: 16,
+        fontSize: 12,
         color: '#ddd',
-        textAlign: 'center',
-        marginBottom: 10,
+        marginBottom: 5,
     },
     ratingContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
+        marginBottom: 5,
     },
     imdbText: {
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: 'bold',
         color: '#f3ce13',
         marginRight: 5,
     },
     ratingText: {
-        fontSize: 18,
+        fontSize: 14,
         color: '#fff',
-        marginLeft: 5,
+    },
+    myListButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(229, 9, 20, 0.8)',
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 15,
+    },
+    myListButtonText: {
+        color: '#fff',
+        fontSize: 12,
+        marginLeft: 3,
+        fontWeight: 'bold',
     },
     loadingContainer: {
         width: Dimensions.get('window').width,
@@ -533,12 +559,20 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     recommendedScrollView: {
-        height: 250,
+        height: 280,
+        paddingLeft: 20,
     },
     recommendedMovieContainer: {
-        width: 150,
-        height: 225,
-        marginHorizontal: 10,
+        width: 180,
+        height: 270,
+        marginRight: 15,
+        borderRadius: 15,
+        overflow: 'hidden',
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
     recommendedMovieImage: {
         width: '100%',
@@ -549,18 +583,18 @@ const styles = StyleSheet.create({
         borderRadius: 15,
     },
     recommendedMovieGradient: {
-        height: '40%',
+        height: '50%',
         justifyContent: 'flex-end',
-        padding: 10,
+        padding: 15,
         borderBottomLeftRadius: 15,
         borderBottomRightRadius: 15,
     },
     recommendedMovieTitle: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
         color: '#fff',
-        textAlign: 'center',
-        marginBottom: 5,
+        textAlign: 'left',
+        marginBottom: 8,
         textShadowColor: 'rgba(0, 0, 0, 0.75)',
         textShadowOffset: { width: -1, height: 1 },
         textShadowRadius: 5
@@ -568,49 +602,46 @@ const styles = StyleSheet.create({
     recommendedRatingText: {
         fontSize: 14,
         color: '#fff',
-        marginLeft: 5,
+        fontWeight: 'bold',
     },
-    upcomingReleaseDate: {
-        fontSize: 12,
-        color: '#ddd',
-        textAlign: 'center',
-        marginTop: 5,
-    },
-    myListButton: {
+    releaseDateContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-        padding: 5,
-        borderRadius: 5,
-        marginTop: 10,
+        backgroundColor: 'rgba(229, 9, 20, 0.8)',
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderRadius: 15,
+        alignSelf: 'flex-start',
     },
-    myListButtonText: {
-        color: '#fff',
+    upcomingReleaseDate: {
         fontSize: 14,
+        color: '#fff',
         marginLeft: 5,
+        fontWeight: 'bold',
     },
     genreScrollView: {
         marginBottom: 20,
+        paddingLeft: 20,
     },
     genreButtonContainer: {
         flexDirection: 'row',
-        paddingHorizontal: 10,
     },
     genreButton: {
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        paddingHorizontal: 15,
-        paddingVertical: 8,
-        borderRadius: 20,
-        marginHorizontal: 5,
-        width: 100, // กำหนดความกว้างคงที่สำหรับปุ่มทุกปุ่ม
+        paddingHorizontal: 18,
+        paddingVertical: 10,
+        borderRadius: 25,
+        marginRight: 12,
+        minWidth: 100,
     },
     selectedGenreButton: {
         backgroundColor: '#e50914',
     },
     genreButtonText: {
         color: '#fff',
-        fontSize: 14,
-        textAlign: 'center', // จัดให้ข้อความอยู่ตรงกลางปุ่ม
+        fontSize: 16,
+        textAlign: 'center',
+        fontWeight: '500',
     },
     selectedGenreButtonText: {
         fontWeight: 'bold',

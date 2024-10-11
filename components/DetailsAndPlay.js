@@ -141,105 +141,111 @@ const DetailsAndPlay = () => {
     };
 
     return (
-        <ScrollView style={styles.container}>
-            <View style={styles.headerContainer}>
-                {isPlaying ? (
-                    <Video
-                        source={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
-                        rate={1.0}
-                        volume={1.0}
-                        isMuted={false}
-                        resizeMode="cover"
-                        shouldPlay
-                        useNativeControls
-                        style={styles.video}
+        <View style={styles.container}>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+            >
+                <View style={styles.headerContainer}>
+                    {isPlaying ? (
+                        <Video
+                            source={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
+                            rate={1.0}
+                            volume={1.0}
+                            isMuted={false}
+                            resizeMode="cover"
+                            shouldPlay
+                            useNativeControls
+                            style={styles.video}
+                        />
+                    ) : (
+                        <Image
+                            source={{ uri: `https://image.tmdb.org/t/p/w500${movie.poster_path}` }}
+                            style={styles.poster}
+                        />
+                    )}
+                    <LinearGradient
+                        colors={['rgba(0,0,0,0.8)', 'transparent']}
+                        style={styles.gradientHeader}
                     />
-                ) : (
-                    <Image
-                        source={{ uri: `https://image.tmdb.org/t/p/w500${movie.poster_path}` }}
-                        style={styles.poster}
+                    <LinearGradient
+                        colors={['transparent', 'rgba(0,0,0,0.9)']}
+                        style={styles.gradientFooter}
                     />
-                )}
-                <LinearGradient
-                    colors={['rgba(0,0,0,0.8)', 'transparent']}
-                    style={styles.gradientHeader}
-                >
-                    <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-                        <Ionicons name="close" size={32} color="#fff" />
-                    </TouchableOpacity>
-                </LinearGradient>
-                <LinearGradient
-                    colors={['transparent', 'rgba(0,0,0,0.9)']}
-                    style={styles.gradientFooter}
-                />
-            </View>
-
-            <View style={styles.infoContainer}>
-                <Text style={styles.title}>{movie.title}</Text>
-                <Text style={styles.releaseDate}>วันที่เข้าฉาย: {movie.release_date}</Text>
-
-                <View style={styles.ratingContainer}>
-                    <BlurView intensity={80} tint="dark" style={styles.ratingBlur}>
-                        <Text style={styles.imdbText}>IMDb</Text>
-                        <Text style={styles.rating}>{movie.vote_average.toFixed(1)}</Text>
-                    </BlurView>
                 </View>
 
-                <Text style={styles.overview}>{movie.overview}</Text>
+                <View style={styles.infoContainer}>
+                    <Text style={styles.title}>{movie.title}</Text>
+                    <Text style={styles.releaseDate}>Release Date: {movie.release_date}</Text>
 
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.myListButton} onPress={handleMyList}>
-                        <Ionicons name={isInMyList ? "checkmark-circle" : "add-circle-outline"} size={24} color="#fff" />
-                        <Text style={styles.myListButtonText}>
-                            {isInMyList ? "นำออกจาก My List" : "เพิ่มใน My List"}
-                        </Text>
-                    </TouchableOpacity>
+                    <View style={styles.ratingContainer}>
+                        <BlurView intensity={80} tint="dark" style={styles.ratingBlur}>
+                            <Text style={styles.imdbText}>IMDb</Text>
+                            <Text style={styles.rating}>{movie.vote_average.toFixed(1)}</Text>
+                        </BlurView>
+                    </View>
 
-                    <TouchableOpacity style={styles.playButton} onPress={handlePlay}>
-                        <Ionicons name="play" size={24} color="#fff" />
-                        <Text style={styles.playButtonText}>ดูตัวอย่างหนัง</Text>
-                    </TouchableOpacity>
-                </View>
+                    <Text style={styles.overview}>{movie.overview}</Text>
 
-                {Object.keys(availablePlatforms).length > 0 && (
-                    <>
-                        {Object.entries(availablePlatforms).map(([type, platforms]) => (
-                            <View key={type}>
-                                <Text style={styles.platformTypeText}>{getPlatformTypeText(type)}:</Text>
-                                <View style={styles.watchOnContainer}>
-                                    {platforms.map((platform, index) => {
-                                        const logo = getPlatformLogo(platform);
-                                        return (
-                                            <TouchableOpacity
-                                                key={index}
-                                                onPress={() => handleWatchOn(platform)}
-                                                style={styles.platformButton}
-                                            >
-                                                {logo ? (
-                                                    <Image source={logo} style={styles.platformLogo} />
-                                                ) : (
-                                                    <Text style={styles.platformText}>{platform}</Text>
-                                                )}
-                                            </TouchableOpacity>
-                                        );
-                                    })}
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.myListButton} onPress={handleMyList}>
+                            <Ionicons name={isInMyList ? "checkmark-circle" : "add-circle-outline"} size={24} color="#fff" />
+                            <Text style={styles.myListButtonText}>
+                                {isInMyList ? "Remove from My List" : "Add to My List"}
+                            </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.playButton} onPress={handlePlay}>
+                            <Ionicons name="play" size={24} color="#fff" />
+                            <Text style={styles.playButtonText}>Watch Trailer</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    {Object.keys(availablePlatforms).length > 0 && (
+                        <>
+                            {Object.entries(availablePlatforms).map(([type, platforms]) => (
+                                <View key={type}>
+                                    <Text style={styles.platformTypeText}>{getPlatformTypeText(type)}:</Text>
+                                    <View style={styles.watchOnContainer}>
+                                        {platforms.map((platform, index) => {
+                                            const logo = getPlatformLogo(platform);
+                                            return (
+                                                <TouchableOpacity
+                                                    key={index}
+                                                    onPress={() => handleWatchOn(platform)}
+                                                    style={styles.platformButton}
+                                                >
+                                                    {logo ? (
+                                                        <Image source={logo} style={styles.platformLogo} />
+                                                    ) : (
+                                                        <Text style={styles.platformText}>{platform}</Text>
+                                                    )}
+                                                </TouchableOpacity>
+                                            );
+                                        })}
+                                    </View>
                                 </View>
-                            </View>
-                        ))}
-                    </>
-                )}
-            </View>
-        </ScrollView>
+                            ))}
+                        </>
+                    )}
+                </View>
+            </ScrollView>
+            <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+                <BlurView intensity={80} tint="dark" style={styles.closeButtonBlur}>
+                    <Ionicons name="close" size={24} color="#fff" />
+                </BlurView>
+            </TouchableOpacity>
+        </View>
     );
 };
 const getPlatformTypeText = (type) => {
     switch (type) {
         case 'flatrate':
-            return 'สตรีมมิ่ง';
+            return 'Streaming';
         case 'rent':
-            return 'เช่า';
+            return 'Rent';
         case 'buy':
-            return 'ซื้อ';
+            return 'Buy';
         default:
             return type;
     }
@@ -273,7 +279,18 @@ const styles = StyleSheet.create({
         right: 0,
     },
     closeButton: {
-        padding: 10,
+        position: 'absolute',
+        top: 40,
+        right: 20,
+        zIndex: 10,
+    },
+    closeButtonBlur: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden',
     },
     poster: {
         width: '100%',
@@ -297,6 +314,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#bbb',
         marginBottom: 10,
+        text: 'Release Date:',
     },
     ratingContainer: {
         flexDirection: 'row',
@@ -347,6 +365,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginLeft: 10,
+        text: 'Watch Trailer',
     },
     myListButton: {
         flex: 1,
@@ -363,6 +382,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginLeft: 10,
+        text: 'Add to My List',
     },
     platformTypeText: {
         color: '#fff',

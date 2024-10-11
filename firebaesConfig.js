@@ -4,14 +4,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage'; // Import the correct Firebase Storage method
 import ConfigKeys from './config';
+import config from "./config";
 // Your Firebase config object
 const firebaseConfig = {
-    apiKey: ConfigKeys().FIREBASE_API_KEY,
-    authDomain: ConfigKeys().FIREBASE_AUTH_DOMAIN,
-    projectId: ConfigKeys().FIREBASE_PROJECT_ID,
-    storageBucket: ConfigKeys().FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: ConfigKeys().FIREBASE_MESSAGING_SENDER_ID,
-    appId: ConfigKeys().FIREBASE_APP_ID
+    apiKey: config().FIREBASE_API_KEY,
+    authDomain: config().FIREBASE_AUTH_DOMAIN,
+    projectId: config().FIREBASE_PROJECT_ID,
+    storageBucket: config().FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: config().FIREBASE_MESSAGING_SENDER_ID,
+    appId: config().FIREBASE_APP_ID
 };
 
 // Initialize Firebase

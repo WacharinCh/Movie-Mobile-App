@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, SafeAreaView, ImageBackground } from 'react-native';
 import { useAuth } from '../../context/authContext';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -22,18 +22,28 @@ export default function Mylist() {
 
     const renderMovieItem = ({ item }) => (
         <TouchableOpacity onPress={() => handleMoviePress(item)} style={styles.movieItem}>
-            <Image
+            <ImageBackground
                 source={{ uri: `https://image.tmdb.org/t/p/w500${item.poster_path}` }}
                 style={styles.moviePoster}
-            />
-            <LinearGradient
-                colors={['transparent', 'rgba(0,0,0,0.8)']}
-                style={styles.gradientOverlay}
-            />
-            <View style={styles.movieInfo}>
-                <Text style={styles.movieTitle} numberOfLines={2}>{item.title}</Text>
-                <Icon name="play-circle-outline" size={24} color="#fff" />
-            </View>
+                imageStyle={styles.moviePosterImage}
+            >
+                <LinearGradient
+                    colors={['transparent', 'rgba(0,0,0,0.9)']}
+                    style={styles.gradientOverlay}
+                >
+                    <View style={styles.movieInfo}>
+                        <Text style={styles.movieTitle} numberOfLines={2}>{item.title}</Text>
+                        <View style={styles.ratingContainer}>
+                            <Text style={styles.imdbText}>IMDb</Text>
+                            <Text style={styles.movieRating}>{item.vote_average.toFixed(1)}</Text>
+                        </View>
+                        <TouchableOpacity style={styles.playButton}>
+                            <Icon name="play-circle-outline" size={24} color="#fff" />
+                            <Text style={styles.playButtonText}>เล่น</Text>
+                        </TouchableOpacity>
+                    </View>
+                </LinearGradient>
+            </ImageBackground>
         </TouchableOpacity>
     );
 
@@ -80,32 +90,67 @@ const styles = StyleSheet.create({
         width: '47%',
         marginHorizontal: '1.5%',
         marginBottom: 20,
-        borderRadius: 10,
+        borderRadius: 15,
         overflow: 'hidden',
         elevation: 5,
     },
     moviePoster: {
         width: '100%',
         height: 250,
+        justifyContent: 'flex-end',
+    },
+    moviePosterImage: {
+        borderRadius: 15,
     },
     gradientOverlay: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        bottom: 0,
-        height: '50%',
+        height: '100%',
+        justifyContent: 'flex-end',
+        padding: 15,
+        borderBottomLeftRadius: 15,
+        borderBottomRightRadius: 15,
     },
     movieInfo: {
-        position: 'absolute',
-        bottom: 10,
-        left: 10,
-        right: 10,
+        justifyContent: 'flex-end',
     },
     movieTitle: {
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: 5,
+        marginBottom: 8,
+        textShadowColor: 'rgba(0, 0, 0, 0.75)',
+        textShadowOffset: { width: -1, height: 1 },
+        textShadowRadius: 5
+    },
+    ratingContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+    imdbText: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: '#f3ce13',
+        marginRight: 5,
+    },
+    movieRating: {
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+    playButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(229, 9, 20, 0.8)',
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 15,
+        alignSelf: 'flex-start',
+    },
+    playButtonText: {
+        color: '#fff',
+        fontSize: 14,
+        marginLeft: 5,
+        fontWeight: 'bold',
     },
     emptyContainer: {
         flex: 1,

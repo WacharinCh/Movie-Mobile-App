@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, ScrollView, ImageBackground } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -31,16 +31,16 @@ export default function SeeAll({ route }) {
 
             switch (category) {
                 case 'recommended':
-                    url = `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=th-TH&page=${page}`;
+                    url = `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`;
                     break;
                 case 'upcoming':
-                    url = `https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}&language=th-TH&page=${page}`;
+                    url = `https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}&language=en-US&page=${page}`;
                     break;
                 case 'genres':
-                    url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=th-TH&with_genres=${selectedGenre}&page=${page}`;
+                    url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=en-US&with_genres=${selectedGenre}&page=${page}`;
                     break;
                 default:
-                    url = `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=th-TH&page=${page}`;
+                    url = `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`;
             }
 
             const response = await fetch(url);
@@ -96,18 +96,24 @@ export default function SeeAll({ route }) {
 
     const MovieItem = ({ movie }) => (
         <TouchableOpacity onPress={() => navigation.navigate('DetailsAndPlay', { movie })} style={styles.movieItem}>
-            <Image
+            <ImageBackground
                 source={{ uri: `https://image.tmdb.org/t/p/w500${movie.poster_path}` }}
                 style={styles.moviePoster}
-            />
-            <LinearGradient
-                colors={['transparent', 'rgba(0,0,0,0.8)']}
-                style={styles.gradientOverlay}
-            />
-            <View style={styles.movieInfo}>
-                <Text style={styles.movieTitle} numberOfLines={2}>{movie.title}</Text>
-                <Text style={styles.movieRating}>IMDb {movie.vote_average.toFixed(1)}</Text>
-            </View>
+                imageStyle={styles.moviePosterImage}
+            >
+                <LinearGradient
+                    colors={['transparent', 'rgba(0,0,0,0.9)']}
+                    style={styles.gradientOverlay}
+                >
+                    <View style={styles.movieInfo}>
+                        <Text style={styles.movieTitle} numberOfLines={2}>{movie.title}</Text>
+                        <View style={styles.ratingContainer}>
+                            <Text style={styles.imdbText}>IMDb</Text>
+                            <Text style={styles.movieRating}>{movie.vote_average.toFixed(1)}</Text>
+                        </View>
+                    </View>
+                </LinearGradient>
+            </ImageBackground>
         </TouchableOpacity>
     );
 
@@ -116,7 +122,7 @@ export default function SeeAll({ route }) {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                     <Ionicons name="chevron-back" size={28} color="#fff" />
@@ -203,36 +209,51 @@ const styles = StyleSheet.create({
         width: '47%',
         marginHorizontal: '1.5%',
         marginBottom: 20,
-        borderRadius: 10,
+        borderRadius: 15,
         overflow: 'hidden',
         elevation: 5,
     },
     moviePoster: {
         width: '100%',
         height: 250,
+        justifyContent: 'flex-end',
+    },
+    moviePosterImage: {
+        borderRadius: 15,
     },
     gradientOverlay: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        bottom: 0,
         height: '50%',
+        justifyContent: 'flex-end',
+        padding: 15,
+        borderBottomLeftRadius: 15,
+        borderBottomRightRadius: 15,
     },
     movieInfo: {
-        position: 'absolute',
-        bottom: 10,
-        left: 10,
-        right: 10,
+        justifyContent: 'flex-end',
     },
     movieTitle: {
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: 5,
+        marginBottom: 8,
+        textShadowColor: 'rgba(0, 0, 0, 0.75)',
+        textShadowOffset: { width: -1, height: 1 },
+        textShadowRadius: 5
+    },
+    ratingContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    imdbText: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: '#f3ce13',
+        marginRight: 5,
     },
     movieRating: {
-        color: '#ffd700',
-        fontSize: 12,
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: 'bold',
     },
     genreScrollViewContainer: {
         marginBottom: 20,
@@ -292,7 +313,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#fff',
         textAlign: 'center',
-        marginRight: 40, // ให้พื้นที่สำหรับปุ่มกลับ
+        marginRight: 40,
     },
     searchButton: {
         padding: 5,

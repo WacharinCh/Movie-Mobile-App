@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         textAlign: 'center',
         color: '#FFFFFF',
+        text: 'Filters and Sorting',
     },
     scrollView: {
         marginBottom: 20,
@@ -183,6 +184,7 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         textAlign: 'center',
         fontWeight: 'bold',
+        text: 'Reset',
     },
     applyButton: {
         flex: 1,
@@ -194,6 +196,7 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         textAlign: 'center',
         fontWeight: 'bold',
+        text: 'Apply',
     },
     categoriesContainer: {
         flexDirection: 'row',

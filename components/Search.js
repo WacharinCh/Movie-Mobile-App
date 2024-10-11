@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, FlatList, Image, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Loading from './Loading';
-import FilterModal from './FilterModal'; // สร้างคอมโพเนนต์นี้แยกต่างหาก
+import FilterModal from './FilterModal';
 import config from '../config';
 
 export default function Search() {
@@ -29,11 +29,11 @@ export default function Search() {
     const fetchGenres = async () => {
         try {
             const API_KEY = config().TMDB_API_KEY;
-            const response = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}&language=th-TH`);
+            const response = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}&language=en-US`);
             const data = await response.json();
             setGenres(data.genres);
         } catch (error) {
-            console.error('เกิดข้อผิดพลาดในการดึงข้อมูลประเภทหนัง:', error);
+            console.error('Error fetching genres:', error);
         }
     };
 
@@ -60,10 +60,10 @@ export default function Search() {
         setLoading(true);
         try {
             const API_KEY = config().TMDB_API_KEY;
-            let url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=th-TH&page=1`;
+            let url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=en-US&page=1`;
 
             if (searchQuery) {
-                url = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=th-TH&query=${encodeURIComponent(searchQuery)}&page=1`;
+                url = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=en-US&query=${encodeURIComponent(searchQuery)}&page=1`;
             }
 
             if (appliedFilters.categories.length > 0) {
@@ -81,7 +81,7 @@ export default function Search() {
             const data = await response.json();
             setSearchResults(data.results);
         } catch (error) {
-            console.error('เกิดข้อผิดพลาดในการค้นหาหนัง:', error);
+            console.error('Error searching movies:', error);
         } finally {
             setLoading(false);
         }
@@ -103,32 +103,38 @@ export default function Search() {
             style={styles.movieItem}
             onPress={() => navigation.navigate('DetailsAndPlay', { movie: item })}
         >
-            <Image
+            <ImageBackground
                 source={{ uri: `https://image.tmdb.org/t/p/w500${item.poster_path}` }}
                 style={styles.moviePoster}
-            />
-            <LinearGradient
-                colors={['transparent', 'rgba(0,0,0,0.8)']}
-                style={styles.gradientOverlay}
-            />
-            <View style={styles.movieInfo}>
-                <Text style={styles.movieTitle} numberOfLines={2}>
-                    {item.title}
-                </Text>
-                <Text style={styles.movieRating}>IMDb {item.vote_average.toFixed(1)}</Text>
-            </View>
+                imageStyle={styles.moviePosterImage}
+            >
+                <LinearGradient
+                    colors={['transparent', 'rgba(0,0,0,0.9)']}
+                    style={styles.gradientOverlay}
+                >
+                    <View style={styles.movieInfo}>
+                        <Text style={styles.movieTitle} numberOfLines={2}>
+                            {item.title}
+                        </Text>
+                        <View style={styles.ratingContainer}>
+                            <Text style={styles.imdbText}>IMDb</Text>
+                            <Text style={styles.movieRating}>{item.vote_average.toFixed(1)}</Text>
+                        </View>
+                    </View>
+                </LinearGradient>
+            </ImageBackground>
         </TouchableOpacity>
     );
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <Ionicons name="chevron-back" size={28} color="#fff" />
+                    <Ionicons name="chevron-back" size={24} color="#fff" />
                 </TouchableOpacity>
                 <TextInput
                     style={styles.searchInput}
-                    placeholder="ค้นหาหนัง..."
+                    placeholder="Search movies..."
                     placeholderTextColor="#999"
                     value={searchQuery}
                     onChangeText={setSearchQuery}
@@ -151,7 +157,7 @@ export default function Search() {
                 />
             ) : searchQuery.length > 2 ? (
                 <View style={styles.noResultsContainer}>
-                    <Text style={styles.noResultsText}>ไม่พบผลการค้นหา</Text>
+                    <Text style={styles.noResultsText}>No results found</Text>
                 </View>
             ) : null}
             <FilterModal
@@ -178,6 +184,9 @@ const styles = StyleSheet.create({
     },
     backButton: {
         marginRight: 10,
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: 20,
+        padding: 8,
     },
     searchInput: {
         flex: 1,
@@ -186,6 +195,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         paddingHorizontal: 15,
         color: '#fff',
+        placeholder: 'Search movies...',
     },
     filterButton: {
         marginLeft: 10,
@@ -197,36 +207,51 @@ const styles = StyleSheet.create({
         width: '47%',
         marginHorizontal: '1.5%',
         marginBottom: 20,
-        borderRadius: 10,
+        borderRadius: 15,
         overflow: 'hidden',
         elevation: 5,
     },
     moviePoster: {
         width: '100%',
         height: 250,
+        justifyContent: 'flex-end',
+    },
+    moviePosterImage: {
+        borderRadius: 15,
     },
     gradientOverlay: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        bottom: 0,
         height: '50%',
+        justifyContent: 'flex-end',
+        padding: 15,
+        borderBottomLeftRadius: 15,
+        borderBottomRightRadius: 15,
     },
     movieInfo: {
-        position: 'absolute',
-        bottom: 10,
-        left: 10,
-        right: 10,
+        justifyContent: 'flex-end',
     },
     movieTitle: {
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: 5,
+        marginBottom: 8,
+        textShadowColor: 'rgba(0, 0, 0, 0.75)',
+        textShadowOffset: { width: -1, height: 1 },
+        textShadowRadius: 5
+    },
+    ratingContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    imdbText: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: '#f3ce13',
+        marginRight: 5,
     },
     movieRating: {
-        color: '#ffd700',
-        fontSize: 12,
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: 'bold',
     },
     noResultsContainer: {
         flex: 1,
@@ -236,6 +261,7 @@ const styles = StyleSheet.create({
     noResultsText: {
         color: '#fff',
         fontSize: 18,
+        text: 'No results found',
     },
     loadingContainer: {
         flex: 1,
