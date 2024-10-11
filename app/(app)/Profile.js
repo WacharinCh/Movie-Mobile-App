@@ -1,4 +1,6 @@
-import { View, Text, Button, Image, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, Alert, ScrollView } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/authContext';
 import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
@@ -104,42 +106,149 @@ export default function Profile() {
     };
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <TouchableOpacity
-                onPress={pickImage}
-                style={{ backgroundColor: '#2d3748', height: 200, width: 200, justifyContent: 'center', alignItems: 'center', borderRadius: 100 }}>
+        <LinearGradient
+            colors={['#121212', '#121212', '#121212']}
+            style={styles.gradient}
+        >
+            <ScrollView contentContainerStyle={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.headerTitle}>โปรไฟล์</Text>
+                </View>
 
-                {image && !uploading ? (
-                    <Image
-                        source={{ uri: image }} // ใช้ state image เพื่อแสดงรูปโปรไฟล์
-                        style={{ width: 200, height: 200, borderRadius: 100 }}
-                        resizeMode='cover' // แสดงผลให้เต็มพื้นที่
-                    />
-                ) : (
-                    // แสดงไอคอนแทนข้อความ "No profile picture"
-                    <FontAwesome5 name="user-alt" size={50} color="white" />
-                )}
-
-                {/* แสดง Loading component เมื่อกำลังอัปโหลด */}
-                {uploading && (
-                    <View style={{
-                        position: 'absolute',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: '100%',
-                        width: '100%',
-                        borderRadius: 100,
-                        backgroundColor: 'rgba(0,0,0,0.5)',
-                    }}>
-                        <Loading size={300} />
+                <TouchableOpacity onPress={pickImage} style={styles.profileImageContainer}>
+                    {image && !uploading ? (
+                        <Image
+                            source={{ uri: image }}
+                            style={styles.profileImage}
+                            resizeMode='cover'
+                        />
+                    ) : (
+                        <View style={styles.placeholderContainer}>
+                            <FontAwesome5 name="user-alt" size={50} color="white" />
+                        </View>
+                    )}
+                    {uploading && (
+                        <View style={styles.loadingOverlay}>
+                            <Loading size={50} />
+                        </View>
+                    )}
+                    <View style={styles.editIconContainer}>
+                        <Ionicons name="pencil" size={20} color="#fff" />
                     </View>
-                )}
-            </TouchableOpacity>
+                </TouchableOpacity>
 
-            <Text>Welcome, {user?.username || 'User'}!</Text>
+                <Text style={styles.username}>{user?.username || 'ผู้ใช้'}</Text>
 
-            <Button title="Sign Out" onPress={handlerLogout} />
+                <View style={styles.infoContainer}>
+                    <View style={styles.infoItem}>
+                        <Ionicons name="mail-outline" size={24} color="#e50914" />
+                        <Text style={styles.infoText}>{user?.email || 'ไม่มีอีเมล'}</Text>
+                    </View>
+                    {/* เพิ่มข้อมูลผู้ใช้อื่นๆ ตามต้องการ */}
+                </View>
 
-        </View>
+                <TouchableOpacity style={styles.logoutButton} onPress={handlerLogout}>
+                    <Ionicons name="log-out-outline" size={24} color="#fff" />
+                    <Text style={styles.logoutButtonText}>ออกจากระบบ</Text>
+                </TouchableOpacity>
+            </ScrollView>
+        </LinearGradient>
     );
 }
+
+const styles = StyleSheet.create({
+    gradient: {
+        flex: 1,
+    },
+    container: {
+        flexGrow: 1,
+        alignItems: 'center',
+        paddingBottom: 40,
+    },
+    header: {
+        width: '100%',
+        paddingHorizontal: 20,
+        paddingTop: 60,
+        paddingBottom: 20,
+    },
+    headerTitle: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#fff',
+    },
+    profileImageContainer: {
+        width: 150,
+        height: 150,
+        borderRadius: 75,
+        marginVertical: 20,
+        elevation: 5,
+    },
+    profileImage: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 75,
+    },
+    placeholderContainer: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 75,
+        backgroundColor: '#2d3748',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        borderRadius: 75,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    editIconContainer: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        backgroundColor: '#e50914',
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    username: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#fff',
+        marginBottom: 20,
+    },
+    infoContainer: {
+        width: '80%',
+        marginBottom: 30,
+    },
+    infoItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.1)',
+        borderRadius: 10,
+        padding: 15,
+        marginBottom: 10,
+    },
+    infoText: {
+        color: '#fff',
+        marginLeft: 10,
+        fontSize: 16,
+    },
+    logoutButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#e50914',
+        paddingVertical: 12,
+        paddingHorizontal: 30,
+        borderRadius: 25,
+    },
+    logoutButtonText: {
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginLeft: 10,
+    },
+});
