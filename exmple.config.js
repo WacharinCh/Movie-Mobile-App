@@ -1,4 +1,4 @@
-export const ConfigKeys = () => {
+const config = () => {
     return {
         TMDB_API_KEY: '',
         FIREBASE_API_KEY: '',
@@ -7,5 +7,7 @@ export const ConfigKeys = () => {
         FIREBASE_STORAGE_BUCKET: '',
         FIREBASE_MESSAGING_SENDER_ID: '',
         FIREBASE_APP_ID: ''
-    }
-}
+    };
+};
+
+export default config;

@@ -6,7 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Loading from './Loading';
 import FilterModal from './FilterModal'; // สร้างคอมโพเนนต์นี้แยกต่างหาก
-import { ConfigKeys } from '../config';
+import config from '../config';
+
 export default function Search() {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
@@ -27,7 +28,7 @@ export default function Search() {
 
     const fetchGenres = async () => {
         try {
-            const API_KEY = ConfigKeys().TMDB_API_KEY;
+            const API_KEY = config().TMDB_API_KEY;
             const response = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}&language=th-TH`);
             const data = await response.json();
             setGenres(data.genres);
@@ -58,7 +59,7 @@ export default function Search() {
     const searchMovies = async (appliedFilters = filters) => {
         setLoading(true);
         try {
-            const API_KEY = ConfigKeys().TMDB_API_KEY;
+            const API_KEY = config().TMDB_API_KEY;
             let url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=th-TH&page=1`;
 
             if (searchQuery) {

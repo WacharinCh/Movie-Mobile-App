@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Loading from './Loading';
 import { Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import ConfigKeys from '../config';
+import config from '../config';
 
 export default function SeeAll({ route }) {
     const { category, genreId } = route.params;
@@ -26,7 +26,7 @@ export default function SeeAll({ route }) {
     const fetchMovies = async () => {
         setLoading(true);
         try {
-            const API_KEY = ConfigKeys().TMDB_API_KEY;
+            const API_KEY = config().TMDB_API_KEY;
             let url;
 
             switch (category) {

@@ -6,7 +6,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { Video } from 'expo-av';
 import { useAuth } from '../context/authContext';
 import { BlurView } from 'expo-blur';
-import ConfigKeys from '../config';
+import config from '../config';
 const { width, height } = Dimensions.get('window');
 
 const DetailsAndPlay = () => {
@@ -27,7 +27,7 @@ const DetailsAndPlay = () => {
 
     const checkAvailablePlatforms = async (movieId) => {
         try {
-            const API_KEY = ConfigKeys().TMDB_API_KEY;
+            const API_KEY = config().TMDB_API_KEY;
             const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=${API_KEY}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

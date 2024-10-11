@@ -4,7 +4,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/authContext';
-import ConfigKeys from '../../config';
+import config from '../../config';
+
 export default function Home() {
     const navigation = useNavigation();
     const [trendingMovies, setTrendingMovies] = useState([]);
@@ -35,7 +36,7 @@ export default function Home() {
 
     const fetchTrendingMovies = async () => {
         try {
-            const API_KEY = ConfigKeys().TMDB_API_KEY;
+            const API_KEY = config().TMDB_API_KEY;
             const response = await fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${API_KEY}&language=th-TH`);
             if (!response.ok) {
                 if (response.status === 401) {
@@ -59,7 +60,7 @@ export default function Home() {
 
     const fetchRecommendedMovies = async () => {
         try {
-            const API_KEY = ConfigKeys().TMDB_API_KEY;
+            const API_KEY = config().TMDB_API_KEY;
             const response = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=th-TH`);
             if (!response.ok) {
                 throw new Error(`การตอบสนองจากเซิร์ฟเวอร์ไม่สมบูรณ์: ${response.status} ${response.statusText}`);
@@ -77,7 +78,7 @@ export default function Home() {
 
     const fetchUpcomingMovies = async () => {
         try {
-            const API_KEY = ConfigKeys().TMDB_API_KEY;
+            const API_KEY = config().TMDB_API_KEY;
             const response = await fetch(`https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}&language=th-TH`);
             if (!response.ok) {
                 throw new Error(`การตอบสนองจากเซิร์ฟเวอร์ไม่สมบูรณ์: ${response.status} ${response.statusText}`);
@@ -95,7 +96,7 @@ export default function Home() {
 
     const fetchMoviesByGenre = async (genreId) => {
         try {
-            const API_KEY = ConfigKeys().TMDB_API_KEY;
+            const API_KEY = config().TMDB_API_KEY;
             const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=th-TH&with_genres=${genreId}`);
             if (!response.ok) {
                 throw new Error(`การตอบสนองจากเซิร์ฟเวอร์ไม่สมบูรณ์: ${response.status} ${response.statusText}`);
@@ -176,6 +177,14 @@ export default function Home() {
 
     const handleSearchPress = () => {
         navigation.navigate('Search');
+    };
+
+    const retryFetchMovies = () => {
+        setError(null);
+        fetchTrendingMovies();
+        fetchRecommendedMovies();
+        fetchUpcomingMovies();
+        fetchMoviesByGenre(selectedGenre);
     };
 
     return (
